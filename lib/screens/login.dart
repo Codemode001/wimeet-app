@@ -12,6 +12,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 20),
               SizedBox(height: 20),
               TextField(
+                controller: emailController,
                 decoration: InputDecoration(
                   labelText: 'Email Address',
                   border: OutlineInputBorder(),
@@ -40,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 10),
               TextField(
+                controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Password',
@@ -48,11 +53,23 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  );
+                onPressed: () async {
+                  final sm = ScaffoldMessenger.of(context);
+                  try {
+                    final authResponse = await supabase.auth.signInWithPassword(
+                      password: passwordController.text,
+                      email: emailController.text,
+                    );
+                    sm.showSnackBar(SnackBar(content: Text("Account Signed in ${authResponse.user?.email}")));
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                      builder: (context) => HomePage(),), (route) => false);
+                  } catch (e) {
+                    if (e is AuthException) {
+                      sm.showSnackBar(SnackBar(content: Text("Error: ${e.message}")));
+                    } else {
+                      sm.showSnackBar(SnackBar(content: Text("Unexpected error occurred")));
+                    }
+                  }
                 },
                 child: Text('Login'),
               ),
