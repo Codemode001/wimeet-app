@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wimeet/screens/home.dart';
+import 'package:wimeet/screens/signup.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -86,7 +87,8 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
-                  // Implement sign up functionality
+                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                    builder: (context) => SignUpPage(),), (route) => false);
                 },
                 child: Text('CREATE ACCOUNT'),
                 style: ElevatedButton.styleFrom(
