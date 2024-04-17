@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:wimeet/screens/home.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+final supabase = Supabase.instance.client;
 
 class MeetingPage extends StatefulWidget {
   @override
@@ -12,11 +15,14 @@ class _MeetingPageState extends State<MeetingPage> {
   late Future<void> _initializeControllerFuture;
   bool _isCameraOpen = false;
   bool _isMicOpen = false;
+  late String userEmail = '';
+  late String userName = '';
 
   @override
   void initState() {
     super.initState();
     _initializeCameraController();
+    fetchUserData();
   }
 
   Future<void> _initializeCameraController() async {
@@ -45,8 +51,29 @@ class _MeetingPageState extends State<MeetingPage> {
     super.dispose();
   }
 
+  Future<void> fetchUserData() async {
+    try {
+      final response = await supabase.auth.currentUser;
+      if (response == null) {
+        throw 'User not authenticated';
+      }
+      final user = response;
+      final userMetadata = response.userMetadata;
+      if (user != null) {
+        setState(() {
+          userEmail = user.email!;
+          userName = userMetadata != null ? userMetadata['displayName'] ?? '' : '';
+        });
+      }
+      print(userName);
+    } catch (error) {
+      print('Error fetching user data: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(userName);
     return Scaffold(
       appBar: AppBar(
         title: Text('WiMeet - Video Meeting'),
@@ -78,6 +105,11 @@ class _MeetingPageState extends State<MeetingPage> {
                 'https://cdn.britannica.com/49/182849-050-4C7FE34F/scene-Iron-Man.jpg',
                 height: 300,
               ),
+            Container(
+              child: Text(userName.isEmpty ? userEmail : userName, style: TextStyle(
+                color: Colors.black,
+              ),),
+            ),
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
