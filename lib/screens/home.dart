@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
       if (user != null) {
         setState(() {
           userEmail = user.email!;
-          userName = userMetadata != null ? userMetadata['displayName'] : ''; // Handle nullable user metadata
+          userName = userMetadata != null ? userMetadata['displayName'] : '';
         });
       }
       print(userName);
@@ -83,99 +83,86 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('WiMeet'),
       ),
-      body: Container(
-        padding: EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-
-            Text(
-              'Welcome to',
-              style: TextStyle(fontSize: 30),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'WiMeet',
-              style: TextStyle(fontSize: 30, color: Colors.blue),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'The place where meetings come to life!',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MeetingPage()),
-                );
-              },
-              child: Text('Start a Meeting'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => JoinMeetingPage()),
-                );
-              },
-              child: Text('Join a Meeting'),
-            ),
-            SizedBox(height: 100),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: FutureBuilder<void>(
+        future: fetchUserData(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return Column(
               children: [
-                Row(
-                  children: [
-                    Text(userName.isEmpty ? userEmail : userName, style: TextStyle(
-                      color: Colors.black,
-                    ),),
-                    SizedBox(width: 20),
-                    Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              toggleProfile = !toggleProfile;
-                            });
-                          },
-                          child: CircleAvatar(
+                Container(
+                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        children: [
+                          CircleAvatar(
                             backgroundImage: NetworkImage(
                               'https://cdn.britannica.com/49/182849-050-4C7FE34F/scene-Iron-Man.jpg',
                             ),
                             radius: 20,
                           ),
-                        ),
-                        if (toggleProfile)
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              // Set background color to white
-                              primary: Colors.white,
-                              // Add shadow
-                              elevation: 5,
-                              // Set shadow color
-                              shadowColor: Colors.grey,
-                            ),
-                            child: Text(
-                              "Log out",
-                              style: TextStyle(
-                                // Set text color to red
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
-                      ],
-                    )
-                  ],
+                          SizedBox(height: 5,),
+                          Text(userName.isEmpty ? userEmail : userName, style: TextStyle(
+                              color: Color(0xFF15A9FF),
+                              fontFamily: "poppins",
+                              letterSpacing: 1
+                          ),),
+                        ],
+                      ),
+                       IconButton(
+                           onPressed: () {
+                             signOut();
+                       },
+                           icon: Icon(Icons.exit_to_app, color: Colors.red,)
+                       )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 120),
+                Text(
+                  'Welcome to',
+                  style: TextStyle(fontSize: 30),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'WiMeet',
+                  style: TextStyle(fontSize: 30, color: Colors.blue),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'The place where meetings come to life!',
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MeetingPage()),
+                    );
+                  },
+                  child: Text('Start a Meeting'),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => JoinMeetingPage()),
+                    );
+                  },
+                  child: Text('Join a Meeting'),
                 ),
               ],
-            ),
-          ],
-        ),
+            );
+          }
+        },
       ),
     );
   }
