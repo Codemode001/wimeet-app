@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wimeet/screens/home.dart';
 import 'package:wimeet/screens/meeting.dart';
+import 'room.dart';
+import 'package:wimeet/api_call.dart';
 
 class JoinMeetingPage extends StatefulWidget {
   @override
@@ -9,6 +10,26 @@ class JoinMeetingPage extends StatefulWidget {
 
 class _JoinMeetingPageState extends State<JoinMeetingPage> {
   TextEditingController _meetingIdController = TextEditingController();
+
+  void onJoinButtonPressed(BuildContext context) {
+    String meetingId = _meetingIdController.text;
+    var re = RegExp("\\w{4}\\-\\w{4}\\-\\w{4}");
+    if (meetingId.isNotEmpty && re.hasMatch(meetingId)) {
+      _meetingIdController.clear();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => MeetingScreen(
+            meetingId: meetingId,
+            token: token,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Please enter valid meeting id"),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +56,7 @@ class _JoinMeetingPageState extends State<JoinMeetingPage> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                // Add your join meeting logic here
-                String meetingId = _meetingIdController.text;
-
-                // Example: Print meeting ID
-                print('Meeting ID: $meetingId');
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MeetingPage()));
-              },
+              onPressed: () => onJoinButtonPressed(context),
               child: Text('Join Meeting'),
             ),
           ],

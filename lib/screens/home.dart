@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:wimeet/screens/join-meeting.dart';
+import 'package:wimeet/screens/join-meeting.dart';
 // import 'package:wimeet/screens/meeting.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wimeet/api_call.dart';
@@ -35,7 +35,6 @@ class _HomePageState extends State<HomePage> {
   late String userName = '';
   late String userId = '';
   bool toggleProfile = false;
-  final _meetingIdController = TextEditingController();
 
     void onCreateButtonPressed(BuildContext context) async {
       await createMeeting().then((meetingId) {
@@ -50,28 +49,6 @@ class _HomePageState extends State<HomePage> {
         );
       });
     }
-
-  void onJoinButtonPressed(BuildContext context) {
-    String meetingId = _meetingIdController.text;
-    var re = RegExp("\\w{4}\\-\\w{4}\\-\\w{4}");
-    // check meeting id is not null or invaild
-    // if meeting id is vaild then navigate to MeetingScreen with meetingId,token
-    if (meetingId.isNotEmpty && re.hasMatch(meetingId)) {
-      _meetingIdController.clear();
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => MeetingScreen(
-            meetingId: meetingId,
-            token: token,
-          ),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Please enter valid meeting id"),
-      ));
-    }
-  }
 
   @override
   void initState() {
@@ -99,28 +76,6 @@ class _HomePageState extends State<HomePage> {
       print('Error fetching user data: $error');
     }
   }
-
-  // Future<void> createMeeting() async {
-  //   try {
-  //     final response = await supabase.auth.currentUser;
-  //     if (response == null) {
-  //       throw 'User not authenticated';
-  //     }
-  //     final user = response;
-  //     await supabase.from('meetings').insert([
-  //       {
-  //         'host' : user.id!
-  //       }
-  //     ]
-  //     );
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => MeetingPage()),
-  //     );
-  //   } catch(error) {
-  //     print(error);
-  //   }
-  // }
 
   Future<void> signOut() async {
     try {
@@ -215,13 +170,12 @@ class _HomePageState extends State<HomePage> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  // onPressed: () {
-                  //   Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(builder: (context) => JoinMeetingPage()),
-                  //   );
-                  // },
-                  onPressed: () => onJoinButtonPressed(context),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => JoinMeetingPage()),
+                    );
+                  },
                   child: Text('Join a Meeting'),
                 ),
               ],

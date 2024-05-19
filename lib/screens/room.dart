@@ -125,10 +125,11 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   camEnabled = !camEnabled;
                 },
                 onLeaveButtonPressed: () {
+                  _room.leave();
                   Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
                 },
               ),
             ],
