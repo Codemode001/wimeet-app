@@ -8,9 +8,10 @@ import 'meeting_controls.dart';
 class MeetingScreen extends StatefulWidget {
   final String meetingId;
   final String token;
+  final String participantName;
 
   const MeetingScreen(
-      {super.key, required this.meetingId, required this.token});
+      {super.key, required this.meetingId, required this.token, required this.participantName});
 
   @override
   State<MeetingScreen> createState() => _MeetingScreenState();
@@ -34,7 +35,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
         camEnabled: camEnabled,
         defaultCameraIndex: kIsWeb
             ? 0
-            : 1  // Index of MediaDevices will be used to set default camera
+            : 1
     );
 
     setMeetingEventListener();
@@ -94,8 +95,10 @@ class _MeetingScreenState extends State<MeetingScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Text(widget.meetingId),
-              //render all participant
+              Text(widget.meetingId, style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF202124)
+              ),),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -109,7 +112,9 @@ class _MeetingScreenState extends State<MeetingScreen> {
                     itemBuilder: (context, index) {
                       return ParticipantTile(
                           key: Key(participants.values.elementAt(index).id),
-                          participant: participants.values.elementAt(index));
+                          participant: participants.values.elementAt(index),
+                          // participantName: widget.participantName
+                      );
                     },
                     itemCount: participants.length,
                   ),

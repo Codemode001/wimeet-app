@@ -21,6 +21,7 @@ class _JoinMeetingPageState extends State<JoinMeetingPage> {
           builder: (context) => MeetingScreen(
             meetingId: meetingId,
             token: token,
+            participantName: '',
           ),
         ),
       );

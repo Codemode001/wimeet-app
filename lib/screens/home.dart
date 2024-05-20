@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
             builder: (context) => MeetingScreen(
               meetingId: meetingId,
               token: token,
+              participantName: userName ?? userEmail,
             ),
           ),
         );
